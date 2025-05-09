@@ -39,7 +39,7 @@ interface ProductFormData {
 const Products = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+    const { data: products, isLoading, error, refetch } = useGetProductsQuery({});
     const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
     const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
@@ -76,7 +76,7 @@ const Products = () => {
                 description: '',
             });
         } else if (mode === 'edit' && productId) {
-            const product = products?.find((p) => p._id === productId);
+            const product = products?.find((p: any) => p._id === productId);
             if (product) {
                 setFormData({
                     name: product.name,
@@ -153,7 +153,7 @@ const Products = () => {
     };
 
     const columns: GridColDef[] = [
-        { field: '_id', headerName: 'ID', flex: 0.5, hide: true },
+        { field: '_id', headerName: 'ID', flex: 0.5 },
         { field: 'name', headerName: 'Name', flex: 1 },
         { field: 'category', headerName: 'Category', flex: 1 },
         {
@@ -250,12 +250,11 @@ const Products = () => {
                     </Typography>
                 ) : (
                     <DataGrid
-                        rows={products || []}
+                        rows={products}
                         columns={columns}
                         components={{ Toolbar: GridToolbar }}
                         getRowId={(row) => row._id}
-                        pageSize={10}
-                        disableSelectionOnClick
+                        disableRowSelectionOnClick
                     />
                 )}
             </Box>

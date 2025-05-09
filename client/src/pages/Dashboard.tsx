@@ -37,7 +37,7 @@ import {
 const Dashboard = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const { data, error, isLoading } = useGetDashboardMetricsQuery();
+    const { data, error, isLoading } = useGetDashboardMetricsQuery({});
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
@@ -276,7 +276,7 @@ const Dashboard = () => {
                         </Typography>
                         {data.recentTransactions && data.recentTransactions.length > 0 ? (
                             <Box sx={{ mt: 1 }}>
-                                {data.recentTransactions.map((transaction) => (
+                                {data.recentTransactions.map((transaction: any) => (
                                     <Box
                                         key={transaction._id}
                                         sx={{

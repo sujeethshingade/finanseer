@@ -5,6 +5,8 @@ import { themeSettings } from './theme';
 import { useSelector } from 'react-redux';
 import { selectMode } from './features/theme/themeSlice';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
@@ -22,21 +24,23 @@ function App() {
     return (
         <div className="app">
             <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route element={<PrivateRoute />}>
-                        <Route element={<Layout />}>
-                            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/products" element={<Products />} />
-                            <Route path="/transactions" element={<Transactions />} />
-                            <Route path="/predictions" element={<Predictions />} />
-                            <Route path="/settings" element={<Settings />} />
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <CssBaseline />
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route element={<PrivateRoute />}>
+                            <Route element={<Layout />}>
+                                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/products" element={<Products />} />
+                                <Route path="/transactions" element={<Transactions />} />
+                                <Route path="/predictions" element={<Predictions />} />
+                                <Route path="/settings" element={<Settings />} />
+                            </Route>
                         </Route>
-                    </Route>
-                </Routes>
+                    </Routes>
+                </LocalizationProvider>
             </ThemeProvider>
         </div>
     );

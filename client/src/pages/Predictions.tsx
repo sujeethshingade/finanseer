@@ -73,7 +73,7 @@ const linearRegressionForecast = (data: any[], periods: number, key: string) => 
 const Predictions = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const { data, error, isLoading } = useGetDashboardMetricsQuery();
+    const { data, error, isLoading } = useGetDashboardMetricsQuery({});
     const [forecastPeriods, setForecastPeriods] = useState(3);
     const [tabValue, setTabValue] = useState(0);
 
@@ -135,7 +135,7 @@ const Predictions = () => {
     // Calculate profit forecasts
     const profitForecasts = revenueForecasts.map((rf, i) => ({
         month: rf.month,
-        profit: rf.revenue - expenseForecasts[i].expenses,
+        profit: Number(rf.revenue) - Number(expenseForecasts[i].expenses),
         forecasted: true,
     }));
 
@@ -307,7 +307,7 @@ const Predictions = () => {
                                         Projected Monthly Revenue
                                     </Typography>
                                     <Typography variant="h4" color={colors.greenAccent[500]}>
-                                        {formatCurrency(revenueForecasts[0]?.revenue || 0)}
+                                        {formatCurrency(Number(revenueForecasts[0]?.revenue || 0))}
                                     </Typography>
                                 </Box>
                                 <Box>
@@ -333,7 +333,7 @@ const Predictions = () => {
                                     </Typography>
                                     <Typography variant="h4" color={colors.greenAccent[500]}>
                                         {formatCurrency(
-                                            revenueForecasts.reduce((sum, item) => sum + item.revenue, 0)
+                                            revenueForecasts.reduce((sum, item) => sum + Number(item.revenue), 0)
                                         )}
                                     </Typography>
                                 </Box>
@@ -444,7 +444,7 @@ const Predictions = () => {
                                         Projected Monthly Expenses
                                     </Typography>
                                     <Typography variant="h4" color={colors.redAccent[500]}>
-                                        {formatCurrency(expenseForecasts[0]?.expenses || 0)}
+                                        {formatCurrency(Number(expenseForecasts[0]?.expenses || 0))}
                                     </Typography>
                                 </Box>
                                 <Box>
@@ -470,7 +470,7 @@ const Predictions = () => {
                                     </Typography>
                                     <Typography variant="h4" color={colors.redAccent[500]}>
                                         {formatCurrency(
-                                            expenseForecasts.reduce((sum, item) => sum + item.expenses, 0)
+                                            expenseForecasts.reduce((sum, item) => sum + Number(item.expenses), 0)
                                         )}
                                     </Typography>
                                 </Box>

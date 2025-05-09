@@ -77,7 +77,7 @@ const Transactions = () => {
             paymentMethod: filters.paymentMethod || undefined,
         }
     );
-    const { data: products } = useGetProductsQuery();
+    const { data: products } = useGetProductsQuery({});
     const [createTransaction, { isLoading: isCreating }] = useCreateTransactionMutation();
     const [updateTransaction, { isLoading: isUpdating }] = useUpdateTransactionMutation();
     const [deleteTransaction] = useDeleteTransactionMutation();
@@ -140,7 +140,7 @@ const Transactions = () => {
                 description: '',
             });
         } else if (mode === 'edit' && transactionId) {
-            const transaction = transactions?.find((t) => t._id === transactionId);
+            const transaction = transactions?.find((t: any) => t._id === transactionId);
             if (transaction) {
                 setFormData({
                     amount: transaction.amount.toString(),
@@ -228,7 +228,7 @@ const Transactions = () => {
     };
 
     const columns: GridColDef[] = [
-        { field: '_id', headerName: 'ID', flex: 0.5, hide: true },
+        { field: '_id', headerName: 'ID', flex: 0.5 },
         {
             field: 'date',
             headerName: 'Date',
@@ -267,7 +267,7 @@ const Transactions = () => {
             renderCell: (params) => (
                 <Typography>
                     {params.value
-                        ? products?.find((p) => p._id === params.value)?.name || 'Unknown'
+                        ? products?.find((p: any) => p._id === params.value)?.name || 'Unknown'
                         : 'N/A'}
                 </Typography>
             ),
@@ -348,7 +348,7 @@ const Transactions = () => {
                                 <DatePicker
                                     label="Start Date"
                                     value={filters.startDate}
-                                    onChange={(date) => handleDateChange('startDate', date)}
+                                    onChange={(date: Date | null) => handleDateChange('startDate', date)}
                                     slotProps={{ textField: { fullWidth: true, variant: 'filled' } }}
                                 />
                             </LocalizationProvider>
@@ -358,7 +358,7 @@ const Transactions = () => {
                                 <DatePicker
                                     label="End Date"
                                     value={filters.endDate}
-                                    onChange={(date) => handleDateChange('endDate', date)}
+                                    onChange={(date: Date | null) => handleDateChange('endDate', date)}
                                     slotProps={{ textField: { fullWidth: true, variant: 'filled' } }}
                                 />
                             </LocalizationProvider>
@@ -444,12 +444,11 @@ const Transactions = () => {
                     </Typography>
                 ) : (
                     <DataGrid
-                        rows={transactions || []}
+                        rows={transactions}
                         columns={columns}
                         components={{ Toolbar: GridToolbar }}
                         getRowId={(row) => row._id}
-                        pageSize={10}
-                        disableSelectionOnClick
+                        disableRowSelectionOnClick
                     />
                 )}
             </Box>
@@ -480,7 +479,7 @@ const Transactions = () => {
                             type="number"
                             fullWidth
                             value={formData.amount}
-                            onChange={handleChange}
+                            onChange={handleChange as React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>}
                             required
                             inputProps={{ step: 0.01, min: 0 }}
                         />
@@ -497,7 +496,7 @@ const Transactions = () => {
                             type="text"
                             fullWidth
                             value={formData.category}
-                            onChange={handleChange}
+                            onChange={handleChange as React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>}
                             required
                         />
                         <FormControl fullWidth variant="outlined">
@@ -509,7 +508,7 @@ const Transactions = () => {
                                 label="Product (Optional)"
                             >
                                 <MenuItem value="">None</MenuItem>
-                                {products?.map((product) => (
+                                {products?.map((product: any) => (
                                     <MenuItem key={product._id} value={product._id}>
                                         {product.name}
                                     </MenuItem>
@@ -549,7 +548,7 @@ const Transactions = () => {
                             type="text"
                             fullWidth
                             value={formData.description}
-                            onChange={handleChange}
+                            onChange={handleChange as React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>}
                             multiline
                             rows={4}
                             sx={{ gridColumn: 'span 2' }}
