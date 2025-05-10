@@ -100,11 +100,14 @@ const Register = () => {
 
         try {
             const { confirmPassword, ...userData } = formValues;
+            console.log('Attempting to register with data:', userData);
             const response = await register(userData).unwrap();
+            console.log('Registration response:', response);
             dispatch(setCredentials(response));
             navigate('/dashboard');
         } catch (err: any) {
-            setError(err.data?.message || 'An error occurred during registration');
+            console.error('Registration error:', err);
+            setError(err.data?.message || err.error || 'An error occurred during registration');
         }
     };
 
@@ -126,7 +129,7 @@ const Register = () => {
             >
                 <Box textAlign="center" mb="2rem">
                     <Typography variant="h2" fontWeight="bold" color={colors.grey[100]}>
-                        FINANSEER
+                        Finanseer
                     </Typography>
                     <Typography variant="h5" color={colors.grey[300]}>
                         Create an Account

@@ -74,7 +74,7 @@ const Login = () => {
             >
                 <Box textAlign="center" mb="2rem">
                     <Typography variant="h2" fontWeight="bold" color={colors.grey[100]}>
-                        FINANSEER
+                        Finanseer
                     </Typography>
                     <Typography variant="h5" color={colors.grey[300]}>
                         Financial Analytics Dashboard

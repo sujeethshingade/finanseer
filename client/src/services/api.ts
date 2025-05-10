@@ -1,22 +1,53 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../features/store';
 
+const baseQuery = fetchBaseQuery({
+  baseUrl: '/api',
+  prepareHeaders: (headers, { getState }) => {
+    // Get token from state
+    const token = (getState() as RootState).auth.token;
+    
+    // Add authorization header if token exists
+    if (token) {
+      headers.set('authorization', `Bearer ${token}`);
+    }
+    
+    return headers;
+  },
+});
+
+// Custom error handling
+const baseQueryWithErrorHandling = async (args: any, api: any, extraOptions: any) => {
+  const result = await baseQuery(args, api, extraOptions);
+  
+  if (result.error) {
+    // Handle connection errors
+    if (result.error.status === 'FETCH_ERROR') {
+      return {
+        error: {
+          status: 'FETCH_ERROR',
+          data: 'Unable to connect to the server. Please make sure the server is running.'
+        }
+      };
+    }
+    
+    // Handle parsing errors
+    if (result.error.status === 'PARSING_ERROR') {
+      return {
+        error: {
+          status: 'PARSING_ERROR',
+          data: 'Server response was not valid JSON. Please check if the server is running correctly.'
+        }
+      };
+    }
+  }
+  
+  return result;
+};
+
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/api',
-    prepareHeaders: (headers, { getState }) => {
-      // Get token from state
-      const token = (getState() as RootState).auth.token;
-      
-      // Add authorization header if token exists
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithErrorHandling,
   tagTypes: ['User', 'KPI', 'Product', 'Transaction'],
   endpoints: (builder) => ({
     // User endpoints

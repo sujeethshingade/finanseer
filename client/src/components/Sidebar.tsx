@@ -105,7 +105,7 @@ const Sidebar = ({
                             <Box display="flex" justifyContent="space-between" alignItems="center">
                                 <Box display="flex" alignItems="center" gap="0.5rem">
                                     <Typography variant="h4" fontWeight="bold">
-                                        FINANSEER
+                                        Finanseer
                                     </Typography>
                                 </Box>
                                 {!isNonMobile && (

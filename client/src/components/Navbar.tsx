@@ -68,7 +68,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }: NavbarProps) => {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h4" fontWeight="bold" color={colors.grey[100]}>
-                        FINANSEER
+                        Finanseer
                     </Typography>
                 </Box>
 
