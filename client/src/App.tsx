@@ -14,6 +14,7 @@ import Transactions from './pages/Transactions';
 import Predictions from './pages/Predictions';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import LandingPage from './pages/LandingPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -26,11 +27,11 @@ function App() {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <CssBaseline />
                     <Routes>
+                        <Route path="/" element={<LandingPage />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route element={<PrivateRoute />}>
                             <Route element={<Layout />}>
-                                <Route path="/" element={<Navigate to="/dashboard" replace />} />
                                 <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/products" element={<Products />} />
                                 <Route path="/transactions" element={<Transactions />} />
