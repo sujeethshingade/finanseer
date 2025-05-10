@@ -2,7 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../features/store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.BACKEND_URL || '/api',
+  baseUrl: process.env.REACT_APP_BACKEND_URL || '/api',
+  credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     // Get token from state
     const token = (getState() as RootState).auth.token;
@@ -11,6 +12,9 @@ const baseQuery = fetchBaseQuery({
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
     }
+    
+    // Add content type header
+    headers.set('Content-Type', 'application/json');
     
     return headers;
   },
