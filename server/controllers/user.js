@@ -15,7 +15,6 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Validate required fields
     if (!name || !email || !password) {
       return res.status(400).json({ 
         message: 'Please provide all required fields',
@@ -27,7 +26,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
@@ -66,8 +64,6 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Find user
     const user = await User.findOne({ email });
 
     // Check if user exists and password matches

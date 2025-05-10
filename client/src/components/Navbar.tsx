@@ -2,7 +2,6 @@ import {
     AppBar,
     Avatar,
     Box,
-    Button,
     IconButton,
     Menu,
     MenuItem,
@@ -14,9 +13,6 @@ import {
     Menu as MenuIcon,
     DarkMode,
     LightMode,
-    NotificationsOutlined,
-    SettingsOutlined,
-    ArrowDropDownOutlined,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMode } from '../features/theme/themeSlice';
@@ -81,48 +77,19 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }: NavbarProps) => {
                             <DarkMode sx={{ fontSize: '25px' }} />
                         )}
                     </IconButton>
-                    <IconButton>
-                        <NotificationsOutlined
-                            sx={{ color: colors.grey[100], fontSize: '25px' }}
-                        />
-                    </IconButton>
-                    <IconButton onClick={() => navigate('/settings')}>
-                        <SettingsOutlined
-                            sx={{ color: colors.grey[100], fontSize: '25px' }}
-                        />
-                    </IconButton>
 
-                    <Box display="flex" alignItems="center">
-                        <Button
-                            onClick={handleClick}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                textTransform: 'none',
-                                gap: '1rem',
-                            }}
-                        >
+                    <Box>
+                        <IconButton onClick={handleClick}>
                             <Avatar
-                                src=""
-                                alt="Profile"
-                                sx={{ width: 32, height: 32 }}
-                            />
-                            <Box textAlign="left">
-                                <Typography
-                                    fontWeight="bold"
-                                    fontSize="0.85rem"
-                                    color={colors.grey[100]}
-                                >
-                                    {user?.name || 'User'}
-                                </Typography>
-                                <Typography fontSize="0.75rem" color={colors.grey[200]}>
-                                    {user?.role || 'Role'}
-                                </Typography>
-                            </Box>
-                            <ArrowDropDownOutlined
-                                sx={{ color: colors.grey[100], fontSize: '25px' }}
-                            />
-                        </Button>
+                                sx={{
+                                    width: 32,
+                                    height: 32,
+                                    bgcolor: colors.greenAccent[500],
+                                }}
+                            >
+                                {user?.name?.charAt(0).toUpperCase() || 'U'}
+                            </Avatar>
+                        </IconButton>
                         <Menu
                             anchorEl={anchorEl}
                             open={isOpen}
@@ -132,12 +99,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }: NavbarProps) => {
                                 horizontal: 'center',
                             }}
                         >
-                            <MenuItem onClick={() => {
-                                handleClose();
-                                navigate('/settings');
-                            }}>
-                                Settings
-                            </MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </Box>

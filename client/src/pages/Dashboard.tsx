@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import {
     Box,
-    Button,
     Typography,
     useTheme,
     Grid,
@@ -30,8 +28,6 @@ import {
     PieChart,
     Pie,
     Cell,
-    BarChart,
-    Bar,
 } from 'recharts';
 
 const Dashboard = () => {
@@ -40,9 +36,9 @@ const Dashboard = () => {
     const { data, error, isLoading } = useGetDashboardMetricsQuery({});
 
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('en-IN', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'INR',
         }).format(amount);
     };
 
@@ -81,17 +77,14 @@ const Dashboard = () => {
         );
     }
 
-    // Prepare chart data
     const monthlyData = data.monthlyData || [];
     const expenseCategories = data.expensesByCategory || {};
 
-    // Format data for pie chart
     const pieChartData = Object.entries(expenseCategories).map(([name, value]) => ({
         name,
         value: Number(value),
     }));
 
-    // Colors for pie chart
     const EXPENSE_COLORS = [
         colors.greenAccent[500],
         colors.blueAccent[500],
@@ -104,56 +97,49 @@ const Dashboard = () => {
         <Box p={2}>
             <Header title="Dashboard" subtitle="Financial overview and KPIs" />
 
-            {/* KPI GRID */}
             <Grid container spacing={2} sx={{ mt: 1 }}>
-                {/* REVENUE */}
                 <Grid item xs={12} sm={6} md={3}>
                     <StatBox
                         title="Total Revenue"
                         value={formatCurrency(data.totalRevenue || 0)}
                         increase="+14% from last month"
-                        icon={<AttachMoney sx={{ color: colors.greenAccent[600], fontSize: 26 }} />}
+                        icon={<AttachMoney sx={{ color: colors.blueAccent[900], fontSize: 26 }} />}
                         description="Since last month"
                     />
                 </Grid>
 
-                {/* EXPENSES */}
                 <Grid item xs={12} sm={6} md={3}>
                     <StatBox
                         title="Total Expenses"
                         value={formatCurrency(data.totalExpenses || 0)}
                         increase="+5% from last month"
-                        icon={<MoneyOffCsred sx={{ color: colors.redAccent[500], fontSize: 26 }} />}
+                        icon={<MoneyOffCsred sx={{ color: colors.blueAccent[900], fontSize: 26 }} />}
                         description="Since last month"
                     />
                 </Grid>
 
-                {/* PROFIT */}
                 <Grid item xs={12} sm={6} md={3}>
                     <StatBox
                         title="Total Profit"
                         value={formatCurrency(data.totalProfit || 0)}
                         increase="+21% from last month"
-                        icon={<AccountBalanceWallet sx={{ color: colors.blueAccent[500], fontSize: 26 }} />}
+                        icon={<AccountBalanceWallet sx={{ color: colors.blueAccent[900], fontSize: 26 }} />}
                         description="Since last month"
                     />
                 </Grid>
 
-                {/* PROFIT MARGIN */}
                 <Grid item xs={12} sm={6} md={3}>
                     <StatBox
                         title="Profit Margin"
                         value={`${data.profitMargin || 0}%`}
                         increase="+12% from last month"
-                        icon={<TrendingUp sx={{ color: colors.greenAccent[600], fontSize: 26 }} />}
+                        icon={<TrendingUp sx={{ color: colors.blueAccent[900], fontSize: 26 }} />}
                         description="Since last month"
                     />
                 </Grid>
             </Grid>
 
-            {/* CHARTS */}
             <Grid container spacing={2} sx={{ mt: 1 }}>
-                {/* REVENUE & EXPENSES CHART */}
                 <Grid item xs={12} md={8}>
                     <Paper
                         sx={{
@@ -186,10 +172,10 @@ const Dashboard = () => {
                                 <YAxis
                                     tick={{ fill: colors.grey[100] }}
                                     tickLine={{ stroke: colors.grey[100] }}
-                                    tickFormatter={(value) => `$${value}`}
+                                    tickFormatter={(value) => `₹${value}`}
                                 />
                                 <Tooltip
-                                    formatter={(value) => [`$${value}`, null]}
+                                    formatter={(value) => [`₹${value}`, null]}
                                     contentStyle={{
                                         backgroundColor: colors.primary[500],
                                         color: colors.grey[100],
@@ -215,7 +201,6 @@ const Dashboard = () => {
                     </Paper>
                 </Grid>
 
-                {/* EXPENSE BREAKDOWN */}
                 <Grid item xs={12} md={4}>
                     <Paper
                         sx={{
@@ -249,7 +234,7 @@ const Dashboard = () => {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    formatter={(value) => [`$${value}`, null]}
+                                    formatter={(value) => [`₹${value}`, null]}
                                     contentStyle={{
                                         backgroundColor: colors.primary[500],
                                         color: colors.grey[100],
@@ -261,7 +246,6 @@ const Dashboard = () => {
                     </Paper>
                 </Grid>
 
-                {/* RECENT TRANSACTIONS */}
                 <Grid item xs={12}>
                     <Paper
                         sx={{

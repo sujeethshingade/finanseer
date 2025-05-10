@@ -7,7 +7,6 @@ import {
     useTheme,
     useMediaQuery,
     Paper,
-    Alert,
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRegisterMutation } from '../services/api';
@@ -137,9 +136,9 @@ const Register = () => {
                 </Box>
 
                 {error && (
-                    <Alert severity="error" sx={{ mb: '1rem' }}>
+                    <Typography color="error" sx={{ mb: '1rem', textAlign: 'center' }}>
                         {error}
-                    </Alert>
+                    </Typography>
                 )}
 
                 <form onSubmit={handleSubmit}>

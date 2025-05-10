@@ -10,14 +10,13 @@ import {
     DialogTitle,
     TextField,
     CircularProgress,
-    Alert,
 } from '@mui/material';
 import {
     Add as AddIcon,
     Edit as EditIcon,
     Delete as DeleteIcon,
 } from '@mui/icons-material';
-import { DataGrid, GridToolbar, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridColDef } from '@mui/x-data-grid';
 import Header from '../components/Header';
 import { tokens } from '../theme';
 import {
@@ -44,14 +43,12 @@ const Products = () => {
     const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
 
-    // Modal state
     const [open, setOpen] = useState(false);
     const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
     const [currentProductId, setCurrentProductId] = useState<string | null>(null);
     const [alertMessage, setAlertMessage] = useState<string | null>(null);
     const [alertSeverity, setAlertSeverity] = useState<'error' | 'success'>('error');
 
-    // Form state
     const [formData, setFormData] = useState<ProductFormData>({
         name: '',
         category: '',
@@ -162,7 +159,7 @@ const Products = () => {
             flex: 0.5,
             renderCell: (params) => (
                 <Typography>
-                    ${params.value.toFixed(2)}
+                    ₹{params.value.toFixed(2)}
                 </Typography>
             ),
         },
@@ -201,8 +198,7 @@ const Products = () => {
 
     return (
         <Box p={2}>
-            <Header title="Products" subtitle="Managing your product inventory" />
-
+            <Header title="Products" subtitle="Manage your product inventory" />
             <Box display="flex" justifyContent="end" mt="20px" mb="20px">
                 <Button
                     color="secondary"
@@ -214,7 +210,6 @@ const Products = () => {
                 </Button>
             </Box>
 
-            {/* DATAGRID */}
             <Box
                 height="75vh"
                 sx={{
@@ -259,16 +254,15 @@ const Products = () => {
                 )}
             </Box>
 
-            {/* Add/Edit Dialog */}
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
                     {dialogMode === 'create' ? 'Add New Product' : 'Edit Product'}
                 </DialogTitle>
                 <DialogContent>
                     {alertMessage && (
-                        <Alert severity={alertSeverity} sx={{ mb: 2 }}>
+                        <Typography color={alertSeverity} sx={{ mb: 2, textAlign: 'center' }}>
                             {alertMessage}
-                        </Alert>
+                        </Typography>
                     )}
                     <Box
                         component="form"

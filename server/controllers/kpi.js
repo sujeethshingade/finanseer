@@ -41,13 +41,11 @@ const getDashboardMetrics = async (req, res) => {
       return res.status(404).json({ message: "No KPI data found" });
     }
 
-    // Get recent transactions
     const recentTransactions = await Transaction.find({ userId: req.userId })
       .sort({ createdAt: -1 })
       .limit(5)
       .populate('productId', 'name price');
 
-    // Calculate basic metrics
     const profitMargin = kpiData.totalRevenue > 0 
       ? (kpiData.totalProfit / kpiData.totalRevenue) * 100 
       : 0;

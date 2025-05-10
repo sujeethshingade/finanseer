@@ -27,20 +27,16 @@ import {
     Area,
 } from 'recharts';
 
-// Simple linear regression for forecasting
 const linearRegressionForecast = (data: any[], periods: number, key: string) => {
     if (!data || data.length < 2) return [];
 
-    // Extract x and y values
     const n = data.length;
     const xValues = Array.from({ length: n }, (_, i) => i);
     const yValues = data.map((d) => d[key]);
 
-    // Calculate the means of x and y
     const xMean = xValues.reduce((a, b) => a + b, 0) / n;
     const yMean = yValues.reduce((a, b) => a + b, 0) / n;
 
-    // Calculate the terms needed for the slope and y-intercept
     let numerator = 0;
     let denominator = 0;
 
@@ -49,11 +45,9 @@ const linearRegressionForecast = (data: any[], periods: number, key: string) => 
         denominator += (xValues[i] - xMean) ** 2;
     }
 
-    // Calculate slope and y-intercept
     const slope = numerator / denominator;
     const yIntercept = yMean - slope * xMean;
 
-    // Generate forecasted values
     const forecast = [];
     const lastMonth = data[data.length - 1].month;
     const monthNumber = parseInt(lastMonth.split(' ')[1] || '0');
@@ -123,23 +117,19 @@ const Predictions = () => {
         );
     }
 
-    // Get monthly data and generate forecasts
     const monthlyData = [...data.monthlyData];
     const revenueForecasts = linearRegressionForecast(monthlyData, forecastPeriods, 'revenue');
     const expenseForecasts = linearRegressionForecast(monthlyData, forecastPeriods, 'expenses');
 
-    // Combine historical and forecasted data
     const revenueChartData = [...monthlyData, ...revenueForecasts];
     const expenseChartData = [...monthlyData, ...expenseForecasts];
 
-    // Calculate profit forecasts
     const profitForecasts = revenueForecasts.map((rf, i) => ({
         month: rf.month,
         profit: Number(rf.revenue) - Number(expenseForecasts[i].expenses),
         forecasted: true,
     }));
 
-    // Combined profit data
     const profitChartData = [
         ...monthlyData.map(d => ({
             month: d.month,
@@ -149,9 +139,8 @@ const Predictions = () => {
         ...profitForecasts,
     ];
 
-    // Calculate accuracy metrics (R-squared)
     const calculateRSquared = (data: any[], forecast: string) => {
-        if (data.length < 5) return 0; // Not enough data for meaningful calculation
+        if (data.length < 5) return 0;
 
         const actual = data.slice(0, -3).map(d => d[forecast]);
         const predicted = data.slice(3).filter(d => !d.forecasted).map(d => d[forecast]);
@@ -166,7 +155,6 @@ const Predictions = () => {
         return 1 - (ssResidual / ssTotal);
     };
 
-    // Accuracy metrics
     const revenueAccuracy = Math.min(100, Math.max(0, calculateRSquared(revenueChartData, 'revenue') * 100));
     const expenseAccuracy = Math.min(100, Math.max(0, calculateRSquared(expenseChartData, 'expenses') * 100));
 
@@ -174,7 +162,6 @@ const Predictions = () => {
         <Box p={2}>
             <Header title="Predictions" subtitle="Financial forecasting and analytics" />
 
-            {/* Forecast Selection */}
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h5">Forecast Horizon</Typography>
                 <Box>
@@ -192,7 +179,6 @@ const Predictions = () => {
                 </Box>
             </Box>
 
-            {/* Tab Navigation */}
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
                 <Tabs
                     value={tabValue}
@@ -206,7 +192,6 @@ const Predictions = () => {
                 </Tabs>
             </Box>
 
-            {/* Revenue Forecast Tab */}
             {tabValue === 0 && (
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={8}>
@@ -343,7 +328,6 @@ const Predictions = () => {
                 </Grid>
             )}
 
-            {/* Expense Forecast Tab */}
             {tabValue === 1 && (
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={8}>
@@ -480,7 +464,6 @@ const Predictions = () => {
                 </Grid>
             )}
 
-            {/* Profit Forecast Tab */}
             {tabValue === 2 && (
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={8}>

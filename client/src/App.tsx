@@ -14,7 +14,6 @@ import Transactions from './pages/Transactions';
 import Predictions from './pages/Predictions';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Settings from './pages/Settings';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -36,7 +35,6 @@ function App() {
                                 <Route path="/products" element={<Products />} />
                                 <Route path="/transactions" element={<Transactions />} />
                                 <Route path="/predictions" element={<Predictions />} />
-                                <Route path="/settings" element={<Settings />} />
                             </Route>
                         </Route>
                     </Routes>

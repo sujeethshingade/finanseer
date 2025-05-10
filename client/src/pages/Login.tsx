@@ -6,7 +6,6 @@ import {
     useTheme,
     useMediaQuery,
     Paper,
-    Alert,
 } from '@mui/material';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as yup from 'yup';
@@ -82,9 +81,9 @@ const Login = () => {
                 </Box>
 
                 {error && (
-                    <Alert severity="error" sx={{ mb: '1rem' }}>
+                    <Typography color="error" sx={{ mb: '1rem', textAlign: 'center' }}>
                         {error}
-                    </Alert>
+                    </Typography>
                 )}
 
                 <Formik

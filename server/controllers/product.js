@@ -74,13 +74,11 @@ const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Check if product exists
     const product = await Product.findById(id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
     
-    // Check if product is used in transactions
     const transactions = await Transaction.findOne({ productId: id });
     if (transactions) {
       return res.status(400).json({ 

@@ -10,17 +10,14 @@ const getTransactions = async (req, res) => {
     const { status, paymentMethod, startDate, endDate } = req.query;
     let query = { userId: req.userId };
     
-    // Filter by status
     if (status) {
       query.status = status;
     }
     
-    // Filter by payment method
     if (paymentMethod) {
       query.paymentMethod = paymentMethod;
     }
     
-    // Filter by date range
     if (startDate && endDate) {
       query.createdAt = {
         $gte: new Date(startDate),
@@ -69,7 +66,6 @@ const createTransaction = async (req, res) => {
   try {
     const { amount, type, category, productId } = req.body;
     
-    // Create transaction
     const transaction = new Transaction({
       ...req.body,
       userId: req.userId,
@@ -77,7 +73,6 @@ const createTransaction = async (req, res) => {
     
     await transaction.save({ session });
     
-    // Update KPI data
     let kpi = await KPI.findOne({ userId: req.userId });
     
     if (!kpi) {
@@ -93,20 +88,17 @@ const createTransaction = async (req, res) => {
       });
     }
     
-    // Update KPI amounts based on transaction type
     if (type === 'income') {
       kpi.totalRevenue += amount;
     } else if (type === 'expense') {
       kpi.totalExpenses += amount;
       
-      // Update expenses by category
       const currentAmount = kpi.expensesByCategory.get(category) || 0;
       kpi.expensesByCategory.set(category, currentAmount + amount);
     }
     
     kpi.totalProfit = kpi.totalRevenue - kpi.totalExpenses;
     
-    // Create/update monthly data
     const date = new Date();
     const month = date.toLocaleString('default', { month: 'short', year: 'numeric' });
     
@@ -134,7 +126,6 @@ const createTransaction = async (req, res) => {
       }
     }
     
-    // Create/update daily data
     const day = date.toISOString().slice(0, 10);
     let dailyData = kpi.dailyData.find(data => data.date === day);
     

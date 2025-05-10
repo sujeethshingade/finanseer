@@ -17,9 +17,7 @@ import {
     ShoppingCartOutlined,
     ReceiptLongOutlined,
     BarChartOutlined,
-    SettingsOutlined,
 } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../features/auth/authSlice';
@@ -59,12 +57,6 @@ const navItems: NavItem[] = [
         text: 'Predictions',
         icon: <BarChartOutlined />,
         path: '/predictions',
-        adminOnly: true,
-    },
-    {
-        text: 'Settings',
-        icon: <SettingsOutlined />,
-        path: '/settings',
     },
 ];
 

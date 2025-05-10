@@ -26,7 +26,6 @@ const linearRegressionForecast = (data, periods) => {
   const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX ** 2);
   const intercept = (sumY - slope * sumX) / n;
 
-  // Generate forecasted values
   const lastX = data[n - 1].x;
   const forecast = [];
 
@@ -54,14 +53,12 @@ const movingAverageForecast = (data, periods, forecastPeriods) => {
   const forecast = [];
   const n = data.length;
 
-  // Calculate initial moving average
   let sum = 0;
   for (let i = n - periods; i < n; i++) {
     sum += data[i];
   }
   let movingAvg = sum / periods;
 
-  // Generate forecasted values
   for (let i = 0; i < forecastPeriods; i++) {
     forecast.push(parseFloat(movingAvg.toFixed(2)));
   }
@@ -80,7 +77,6 @@ const predictFinancialMetrics = (monthlyData, months = 3) => {
     return null;
   }
 
-  // Prepare data for forecasting
   const revenueData = monthlyData.map((month, index) => ({ 
     x: index, 
     y: month.revenue 
@@ -91,11 +87,8 @@ const predictFinancialMetrics = (monthlyData, months = 3) => {
     y: month.expenses 
   }));
 
-  // Forecast revenue and expenses
   const revenueForecasts = linearRegressionForecast(revenueData, months);
   const expensesForecasts = linearRegressionForecast(expensesData, months);
-
-  // Generate predicted results
   const predictions = [];
   
   for (let i = 0; i < months; i++) {

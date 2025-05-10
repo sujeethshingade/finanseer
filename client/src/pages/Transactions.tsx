@@ -221,9 +221,9 @@ const Transactions = () => {
     };
 
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('en-IN', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'INR',
         }).format(amount);
     };
 
@@ -306,7 +306,6 @@ const Transactions = () => {
     return (
         <Box p={2}>
             <Header title="Transactions" subtitle="View and manage your financial transactions" />
-
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -331,7 +330,6 @@ const Transactions = () => {
                 </Button>
             </Box>
 
-            {/* Filters */}
             {showFilters && (
                 <Box
                     bgcolor={colors.primary[400]}
@@ -408,7 +406,6 @@ const Transactions = () => {
                 </Box>
             )}
 
-            {/* DATAGRID */}
             <Box
                 height="75vh"
                 sx={{
@@ -453,16 +450,15 @@ const Transactions = () => {
                 )}
             </Box>
 
-            {/* Add/Edit Dialog */}
             <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
                 <DialogTitle>
                     {dialogMode === 'create' ? 'Add New Transaction' : 'Edit Transaction'}
                 </DialogTitle>
                 <DialogContent>
                     {alertMessage && (
-                        <Alert severity={alertSeverity} sx={{ mb: 2 }}>
+                        <Typography color={alertSeverity} sx={{ mb: 2, textAlign: 'center' }}>
                             {alertMessage}
-                        </Alert>
+                        </Typography>
                     )}
                     <Box
                         component="form"
