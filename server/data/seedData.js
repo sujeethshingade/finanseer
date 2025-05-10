@@ -9,8 +9,8 @@ dotenv.config();
 
 // Sample user data
 const sampleUser = {
-  name: 'Demo User',
-  email: 'demo@example.com',
+  name: 'Admin',
+  email: 'test@gmail.com',
   password: 'password123',
   role: 'admin'
 };
