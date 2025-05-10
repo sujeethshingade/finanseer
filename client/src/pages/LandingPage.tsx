@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Button, Container, Typography, useTheme, Grid, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { tokens } from '../theme';
@@ -66,6 +65,25 @@ const LandingPage = () => {
             icon: <Insights sx={{ fontSize: 40, color: colors.greenAccent[500] }} />,
             title: "Smart Predictions",
             description: "AI-powered predictions for future financial trends and opportunities"
+        }
+    ];
+
+    const steps = [
+        {
+            title: "Sign Up",
+            description: "Create your account and set up your financial profile"
+        },
+        {
+            title: "Update Details",
+            description: "Update your details of transactions and preferences"
+        },
+        {
+            title: "Get Insights",
+            description: "Receive AI-powered insights and recommendations"
+        },
+        {
+            title: "Track Progress",
+            description: "Monitor your financial goals and track your progress"
         }
     ];
 
@@ -233,11 +251,97 @@ const LandingPage = () => {
                 </Container>
             </MotionBox>
 
+            {/* How It Works Section */}
+            <MotionBox
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={staggerContainer}
+                sx={{
+                    py: 8,
+                    px: 2,
+                    backgroundColor: colors.primary[500],
+                }}
+            >
+                <Container maxWidth="lg">
+                    <MotionTypography
+                        variants={fadeIn}
+                        variant="h2"
+                        sx={{
+                            color: colors.grey[100],
+                            mb: 6,
+                            textAlign: 'center',
+                            fontSize: { xs: '2rem', md: '3rem' },
+                        }}
+                    >
+                        How It Works
+                    </MotionTypography>
+                    <Grid container spacing={4}>
+                        {steps.map((step, index) => (
+                            <Grid item xs={12} sm={6} md={3} key={index}>
+                                <MotionBox
+                                    variants={fadeIn}
+                                    whileHover={{ scale: 1.05 }}
+                                    component={Paper}
+                                    sx={{
+                                        p: 3,
+                                        height: '100%',
+                                        backgroundColor: colors.primary[500],
+                                        borderRadius: 2,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        textAlign: 'center',
+                                        position: 'relative',
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            right: '-20px',
+                                            top: '50%',
+                                            width: '40px',
+                                            height: '2px',
+                                            backgroundColor: colors.greenAccent[500],
+                                            display: index === steps.length - 1 ? 'none' : { xs: 'none', md: 'block' },
+                                        },
+                                    }}
+                                >
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            color: colors.greenAccent[500],
+                                            mb: 1,
+                                        }}
+                                    >
+                                        Step {index + 1}
+                                    </Typography>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            color: colors.grey[100],
+                                            mb: 2,
+                                        }}
+                                    >
+                                        {step.title}
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            color: colors.grey[300],
+                                        }}
+                                    >
+                                        {step.description}
+                                    </Typography>
+                                </MotionBox>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Container>
+            </MotionBox>
+
             {/* Footer */}
             <Box
                 component="footer"
                 sx={{
-                    width: '100%',
                     py: 3,
                     px: 2,
                     mt: 'auto',
@@ -245,7 +349,7 @@ const LandingPage = () => {
                     color: colors.grey[100],
                 }}
             >
-                <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Container maxWidth="lg">
                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                         © {new Date().getFullYear()} Finanseer. All rights reserved.
                     </Typography>
