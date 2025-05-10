@@ -27,43 +27,6 @@ import {
     Area,
 } from 'recharts';
 
-const linearRegressionForecast = (data: any[], periods: number, key: string) => {
-    if (!data || data.length < 2) return [];
-
-    const n = data.length;
-    const xValues = Array.from({ length: n }, (_, i) => i);
-    const yValues = data.map((d) => d[key]);
-
-    const xMean = xValues.reduce((a, b) => a + b, 0) / n;
-    const yMean = yValues.reduce((a, b) => a + b, 0) / n;
-
-    let numerator = 0;
-    let denominator = 0;
-
-    for (let i = 0; i < n; i++) {
-        numerator += (xValues[i] - xMean) * (yValues[i] - yMean);
-        denominator += (xValues[i] - xMean) ** 2;
-    }
-
-    const slope = numerator / denominator;
-    const yIntercept = yMean - slope * xMean;
-
-    const forecast = [];
-    const lastMonth = data[data.length - 1].month;
-    const monthNumber = parseInt(lastMonth.split(' ')[1] || '0');
-
-    for (let i = 1; i <= periods; i++) {
-        const forecastedY = slope * (n + i - 1) + yIntercept;
-        forecast.push({
-            month: `Month ${monthNumber + i}`,
-            [key]: Math.max(0, parseFloat(forecastedY.toFixed(2))),
-            forecasted: true,
-        });
-    }
-
-    return forecast;
-};
-
 const Predictions = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -76,20 +39,15 @@ const Predictions = () => {
     };
 
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('en-IN', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'INR',
         }).format(amount);
     };
 
     if (isLoading) {
         return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="80vh"
-            >
+            <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
                 <CircularProgress />
             </Box>
         );
@@ -118,8 +76,49 @@ const Predictions = () => {
     }
 
     const monthlyData = [...data.monthlyData];
-    const revenueForecasts = linearRegressionForecast(monthlyData, forecastPeriods, 'revenue');
-    const expenseForecasts = linearRegressionForecast(monthlyData, forecastPeriods, 'expenses');
+    const lastMonth = monthlyData[monthlyData.length - 1];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [lastMonthStr, lastYearStr] = lastMonth.month.split(' ');
+    const lastMonthIndex = monthNames.indexOf(lastMonthStr);
+    const lastYear = parseInt(lastYearStr);
+
+    const calculateForecast = (data: any[], key: string) => {
+        const n = data.length;
+        const xValues = Array.from({ length: n }, (_, i) => i);
+        const yValues = data.map(d => d[key]);
+
+        const xMean = xValues.reduce((a, b) => a + b, 0) / n;
+        const yMean = yValues.reduce((a, b) => a + b, 0) / n;
+
+        let numerator = 0;
+        let denominator = 0;
+
+        for (let i = 0; i < n; i++) {
+            numerator += (xValues[i] - xMean) * (yValues[i] - yMean);
+            denominator += (xValues[i] - xMean) ** 2;
+        }
+
+        const slope = numerator / denominator;
+        const yIntercept = yMean - slope * xMean;
+
+        const forecast = [];
+        for (let i = 1; i <= forecastPeriods; i++) {
+            const nextMonthIndex = (lastMonthIndex + i) % 12;
+            const nextYear = lastYear + Math.floor((lastMonthIndex + i) / 12);
+            const forecastedY = slope * (n + i - 1) + yIntercept;
+
+            forecast.push({
+                month: `${monthNames[nextMonthIndex]} ${nextYear}`,
+                [key]: Math.max(0, parseFloat(forecastedY.toFixed(2))),
+                forecasted: true,
+            });
+        }
+
+        return forecast;
+    };
+
+    const revenueForecasts = calculateForecast(monthlyData, 'revenue');
+    const expenseForecasts = calculateForecast(monthlyData, 'expenses');
 
     const revenueChartData = [...monthlyData, ...revenueForecasts];
     const expenseChartData = [...monthlyData, ...expenseForecasts];
@@ -139,24 +138,23 @@ const Predictions = () => {
         ...profitForecasts,
     ];
 
-    const calculateRSquared = (data: any[], forecast: string) => {
+    const calculateAccuracy = (data: any[], key: string) => {
         if (data.length < 5) return 0;
 
-        const actual = data.slice(0, -3).map(d => d[forecast]);
-        const predicted = data.slice(3).filter(d => !d.forecasted).map(d => d[forecast]);
+        const actual = data.slice(0, -3).map(d => d[key]);
+        const predicted = data.slice(3).filter(d => !d.forecasted).map(d => d[key]);
 
         if (actual.length !== predicted.length) return 0;
 
         const mean = actual.reduce((a, b) => a + b, 0) / actual.length;
-
         const ssTotal = actual.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0);
         const ssResidual = actual.reduce((sum, value, i) => sum + Math.pow(value - predicted[i], 2), 0);
 
-        return 1 - (ssResidual / ssTotal);
+        return Math.min(100, Math.max(0, (1 - (ssResidual / ssTotal)) * 100));
     };
 
-    const revenueAccuracy = Math.min(100, Math.max(0, calculateRSquared(revenueChartData, 'revenue') * 100));
-    const expenseAccuracy = Math.min(100, Math.max(0, calculateRSquared(expenseChartData, 'expenses') * 100));
+    const revenueAccuracy = calculateAccuracy(revenueChartData, 'revenue');
+    const expenseAccuracy = calculateAccuracy(expenseChartData, 'expenses');
 
     return (
         <Box p={2}>
@@ -226,7 +224,7 @@ const Predictions = () => {
                                     <YAxis
                                         tick={{ fill: colors.grey[100] }}
                                         tickLine={{ stroke: colors.grey[100] }}
-                                        tickFormatter={(value) => `$${value}`}
+                                        tickFormatter={(value) => formatCurrency(value)}
                                     />
                                     <Tooltip
                                         formatter={(value) => [formatCurrency(Number(value)), 'Revenue']}
@@ -279,14 +277,6 @@ const Predictions = () => {
                                 Revenue Insights
                             </Typography>
                             <Box p={2} display="flex" flexDirection="column" gap={2}>
-                                <Box>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        Forecast Accuracy
-                                    </Typography>
-                                    <Typography variant="h4" color={colors.greenAccent[500]}>
-                                        {revenueAccuracy.toFixed(1)}%
-                                    </Typography>
-                                </Box>
                                 <Box>
                                     <Typography variant="body1" fontWeight="bold">
                                         Projected Monthly Revenue
@@ -362,7 +352,7 @@ const Predictions = () => {
                                     <YAxis
                                         tick={{ fill: colors.grey[100] }}
                                         tickLine={{ stroke: colors.grey[100] }}
-                                        tickFormatter={(value) => `$${value}`}
+                                        tickFormatter={(value) => formatCurrency(value)}
                                     />
                                     <Tooltip
                                         formatter={(value) => [formatCurrency(Number(value)), 'Expenses']}
@@ -415,14 +405,6 @@ const Predictions = () => {
                                 Expense Insights
                             </Typography>
                             <Box p={2} display="flex" flexDirection="column" gap={2}>
-                                <Box>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        Forecast Accuracy
-                                    </Typography>
-                                    <Typography variant="h4" color={colors.redAccent[500]}>
-                                        {expenseAccuracy.toFixed(1)}%
-                                    </Typography>
-                                </Box>
                                 <Box>
                                     <Typography variant="body1" fontWeight="bold">
                                         Projected Monthly Expenses
@@ -486,8 +468,7 @@ const Predictions = () => {
                                         top: 20,
                                         right: 30,
                                         left: 20,
-                                        bottom:
-                                            30,
+                                        bottom: 30,
                                     }}
                                 >
                                     <CartesianGrid strokeDasharray="3 3" stroke={colors.grey[800]} />
@@ -499,7 +480,7 @@ const Predictions = () => {
                                     <YAxis
                                         tick={{ fill: colors.grey[100] }}
                                         tickLine={{ stroke: colors.grey[100] }}
-                                        tickFormatter={(value) => `$${value}`}
+                                        tickFormatter={(value) => formatCurrency(value)}
                                     />
                                     <Tooltip
                                         formatter={(value) => [formatCurrency(Number(value)), 'Profit']}

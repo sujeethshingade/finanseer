@@ -9,30 +9,34 @@ const linearRegressionForecast = (data, periods) => {
     return [];
   }
 
-  // Calculate the slope and intercept for linear regression
   const n = data.length;
-  let sumX = 0;
-  let sumY = 0;
-  let sumXY = 0;
-  let sumX2 = 0;
+  const xValues = Array.from({ length: n }, (_, i) => i);
+  const yValues = data.map(d => d.y);
+
+  const xMean = xValues.reduce((a, b) => a + b, 0) / n;
+  const yMean = yValues.reduce((a, b) => a + b, 0) / n;
+
+  let numerator = 0;
+  let denominator = 0;
 
   for (let i = 0; i < n; i++) {
-    sumX += data[i].x;
-    sumY += data[i].y;
-    sumXY += data[i].x * data[i].y;
-    sumX2 += data[i].x ** 2;
+    numerator += (xValues[i] - xMean) * (yValues[i] - yMean);
+    denominator += (xValues[i] - xMean) ** 2;
   }
 
-  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX ** 2);
-  const intercept = (sumY - slope * sumX) / n;
+  const slope = numerator / denominator;
+  const yIntercept = yMean - slope * xMean;
 
-  const lastX = data[n - 1].x;
   const forecast = [];
+  const lastX = xValues[n - 1];
 
   for (let i = 1; i <= periods; i++) {
     const x = lastX + i;
-    const y = slope * x + intercept;
-    forecast.push({ x, y: Math.max(0, parseFloat(y.toFixed(2))) });
+    const y = slope * x + yIntercept;
+    forecast.push({
+      x,
+      y: Math.max(0, parseFloat(y.toFixed(2)))
+    });
   }
 
   return forecast;
@@ -77,32 +81,42 @@ const predictFinancialMetrics = (monthlyData, months = 3) => {
     return null;
   }
 
-  const revenueData = monthlyData.map((month, index) => ({ 
-    x: index, 
-    y: month.revenue 
+  const revenueData = monthlyData.map((month, index) => ({
+    x: index,
+    y: month.revenue
   }));
   
-  const expensesData = monthlyData.map((month, index) => ({ 
-    x: index, 
-    y: month.expenses 
+  const expensesData = monthlyData.map((month, index) => ({
+    x: index,
+    y: month.expenses
   }));
 
   const revenueForecasts = linearRegressionForecast(revenueData, months);
   const expensesForecasts = linearRegressionForecast(expensesData, months);
   const predictions = [];
   
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const lastMonth = monthlyData[monthlyData.length - 1].month;
+  const [lastMonthStr, lastYearStr] = lastMonth.split(' ');
+  const lastMonthIndex = monthNames.indexOf(lastMonthStr);
+  const lastYear = parseInt(lastYearStr);
+
   for (let i = 0; i < months; i++) {
     const revenue = revenueForecasts[i].y;
     const expenses = expensesForecasts[i].y;
     const profit = revenue - expenses;
     const profitMargin = revenue > 0 ? (profit / revenue) * 100 : 0;
     
+    const nextMonthIndex = (lastMonthIndex + i + 1) % 12;
+    const nextYear = lastYear + Math.floor((lastMonthIndex + i + 1) / 12);
+
     predictions.push({
-      month: `Month ${monthlyData.length + i + 1}`,
+      month: `${monthNames[nextMonthIndex]} ${nextYear}`,
       revenue,
       expenses,
       profit,
       profitMargin: parseFloat(profitMargin.toFixed(2)),
+      forecasted: true
     });
   }
 
